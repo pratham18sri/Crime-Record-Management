@@ -49,33 +49,35 @@ const ReportCrime = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white">File Crime Report</h2>
-        <div className="flex items-center space-x-2 text-yellow-300">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-          </svg>
-          <span className="text-sm">Provide accurate information</span>
-        </div>
-      </div>
-
-      <div className="bg-yellow-900/20 border border-yellow-700 rounded-2xl p-6">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-yellow-600 rounded-full flex items-center justify-center">
-            <span className="text-white text-lg">⚠️</span>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-gray-800/60 rounded-2xl border border-gray-700 p-6 space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-white">File Crime Report</h2>
+            <div className="flex items-center space-x-2 text-yellow-300">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+              <span className="text-sm">Provide accurate information</span>
+            </div>
           </div>
-          <div>
-            <h3 className="text-yellow-300 font-semibold">Important Notice</h3>
-            <p className="text-yellow-200 text-sm">
-              False reporting is a criminal offense. Please provide truthful and accurate information.
-              In case of emergency, call emergency services immediately.
-            </p>
-          </div>
-        </div>
-      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="bg-yellow-900/20 border border-yellow-700 rounded-2xl p-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-yellow-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-lg">⚠️</span>
+              </div>
+              <div>
+                <h3 className="text-yellow-300 font-semibold">Important Notice</h3>
+                <p className="text-yellow-200 text-sm">
+                  False reporting is a criminal offense. Please provide truthful and accurate information.
+                  In case of emergency, call emergency services immediately.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Incident Type */}
           <div className="md:col-span-2">
@@ -236,7 +238,9 @@ const ReportCrime = () => {
             Submit Report
           </button>
         </div>
-      </form>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

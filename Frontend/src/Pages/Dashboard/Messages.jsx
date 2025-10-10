@@ -64,13 +64,15 @@ const Messages = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white">Messages</h2>
-        <p className="text-gray-400">Communicate with assigned officers</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-gray-800/60 rounded-2xl border border-gray-700 p-6 space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-white">Messages</h2>
+            <p className="text-gray-400">Communicate with assigned officers</p>
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
         {/* Conversations List */}
         <div className="lg:col-span-1 bg-gray-700/50 rounded-2xl border border-gray-600 overflow-hidden">
           <div className="p-4 border-b border-gray-600">
@@ -212,6 +214,8 @@ const Messages = () => {
           </div>
           <h4 className="text-white font-semibold mb-1">Notifications</h4>
           <p className="text-gray-400 text-sm">Manage message alerts</p>
+        </div>
+          </div>
         </div>
       </div>
     </div>

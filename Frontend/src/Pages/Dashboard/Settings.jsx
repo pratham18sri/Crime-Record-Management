@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { dataContext } from '../../context/usercontex.jsx';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
 
+  const { currentUser } = useContext(dataContext);
   const [profileData, setProfileData] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    address: '123 Main St, City, State 12345'
+    firstName: currentUser?.firstname || 'John',
+    lastName: currentUser?.lastname || 'Doe',
+    email: currentUser?.email || 'john.doe@example.com',
+    phone: currentUser?.phone || '+1 (555) 123-4567',
+    address: currentUser?.address || '123 Main St, City, State 12345'
   });
+
+  useEffect(() => {
+    if (currentUser) {
+      setProfileData(prev => ({
+        ...prev,
+        firstName: currentUser.firstname || prev.firstName,
+        lastName: currentUser.lastname || prev.lastName,
+        email: currentUser.email || prev.email
+      }));
+    }
+  }, [currentUser]);
 
   const [preferences, setPreferences] = useState({
     emailNotifications: true,
@@ -56,53 +69,57 @@ const Settings = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white">Account Settings</h2>
-        <p className="text-gray-400">Manage your account and preferences</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Settings Navigation */}
-        <div className="lg:col-span-1">
-          <div className="bg-gray-700/50 rounded-2xl border border-gray-600 p-6">
-            <nav className="space-y-2">
-              {[
-                { id: 'profile', label: 'Profile Information', icon: '👤' },
-                { id: 'preferences', label: 'Notifications', icon: '🔔' }
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center px-4 py-3 text-left rounded-xl transition-all duration-200 ${
-                    activeTab === item.id
-                      ? 'bg-blue-600 text-white shadow-lg'
-                      : 'text-gray-300 hover:bg-gray-600 hover:text-white'
-                  }`}
-                >
-                  <span className="text-lg mr-3">{item.icon}</span>
-                  <span className="font-medium">{item.label}</span>
-                </button>
-              ))}
-            </nav>
-
-            {/* Account Status */}
-            <div className="mt-8 p-4 bg-green-900/20 rounded-xl border border-green-700">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span className="text-green-300 text-sm font-semibold">Account Active</span>
-              </div>
-              <p className="text-green-200 text-xs">
-                Your account is in good standing with full access to all features.
-              </p>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-gray-800/60 rounded-2xl border border-gray-700 p-6 space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-white">Account Settings</h2>
+            <p className="text-gray-400">Manage your account and preferences</p>
           </div>
-        </div>
 
-        {/* Settings Content */}
-        <div className="lg:col-span-3">
-          <div className="bg-gray-700/50 rounded-2xl border border-gray-600 p-6">
-            {renderTabContent()}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Settings Navigation */}
+            <div className="lg:col-span-1">
+              <div className="bg-gray-700/50 rounded-2xl border border-gray-600 p-6">
+                <nav className="space-y-2">
+                  {[
+                    { id: 'profile', label: 'Profile Information', icon: '👤' },
+                    { id: 'preferences', label: 'Notifications', icon: '🔔' }
+                  ].map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id)}
+                      className={`w-full flex items-center px-4 py-3 text-left rounded-xl transition-all duration-200 ${
+                        activeTab === item.id
+                          ? 'bg-blue-600 text-white shadow-lg'
+                          : 'text-gray-300 hover:bg-gray-600 hover:text-white'
+                      }`}
+                    >
+                      <span className="text-lg mr-3">{item.icon}</span>
+                      <span className="font-medium">{item.label}</span>
+                    </button>
+                  ))}
+                </nav>
+
+                {/* Account Status */}
+                <div className="mt-8 p-4 bg-green-900/20 rounded-xl border border-green-700">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span className="text-green-300 text-sm font-semibold">Account Active</span>
+                  </div>
+                  <p className="text-green-200 text-xs">
+                    Your account is in good standing with full access to all features.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Settings Content */}
+            <div className="lg:col-span-3">
+              <div className="bg-gray-700/50 rounded-2xl border border-gray-600 p-6">
+                {renderTabContent()}
+              </div>
+            </div>
           </div>
         </div>
       </div>

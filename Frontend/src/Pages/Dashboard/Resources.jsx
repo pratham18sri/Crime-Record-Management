@@ -36,6 +36,12 @@ const Resources = () => {
         description: 'Important phone numbers and contacts',
         type: 'directory',
         icon: '📞'
+      },
+      {
+        title: 'First Aid Basics',
+        description: 'Essential first aid information',
+        type: 'guide',
+        icon: '🩹'
       }
     ],
     legal: [
@@ -50,6 +56,32 @@ const Resources = () => {
         description: 'Understanding the legal process',
         type: 'guide',
         icon: '📋'
+      },
+      {
+        title: 'Witness Information',
+        description: 'Guidelines for being a witness',
+        type: 'guide',
+        icon: '👁️'
+      }
+    ],
+    support: [
+      {
+        title: 'Victim Support Services',
+        description: 'Counseling and support resources',
+        type: 'support',
+        icon: '🤝'
+      },
+      {
+        title: 'Community Programs',
+        description: 'Local safety initiatives',
+        type: 'program',
+        icon: '👥'
+      },
+      {
+        title: 'Financial Assistance',
+        description: 'Help with crime-related expenses',
+        type: 'assistance',
+        icon: '💰'
       }
     ]
   };
@@ -57,7 +89,8 @@ const Resources = () => {
   const emergencyContacts = [
     { name: 'Police Emergency', number: '911', description: 'Immediate police response' },
     { name: 'Non-Emergency Police', number: '311', description: 'General police inquiries' },
-    { name: 'Crime Stoppers', number: '1-800-222-8477', description: 'Anonymous crime reporting' }
+    { name: 'Crime Stoppers', number: '1-800-222-8477', description: 'Anonymous crime reporting' },
+    { name: 'Victim Support Hotline', number: '1-855-484-2846', description: '24/7 victim assistance' }
   ];
 
   const getTypeColor = (type) => {
@@ -67,110 +100,150 @@ const Resources = () => {
       case 'procedure': return 'bg-red-500/20 text-red-300 border-red-500/30';
       case 'directory': return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
       case 'rights': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
+      case 'support': return 'bg-pink-500/20 text-pink-300 border-pink-500/30';
+      case 'program': return 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30';
+      case 'assistance': return 'bg-teal-500/20 text-teal-300 border-teal-500/30';
       default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white">Safety Resources</h2>
-        <p className="text-gray-400">Important information and support services</p>
-      </div>
-
-      {/* Emergency Contacts */}
-      <div className="bg-gradient-to-br from-red-900/30 to-red-800/20 rounded-2xl border border-red-700 p-6">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center">
-            <span className="text-white text-2xl">🚨</span>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-gray-800/60 rounded-2xl border border-gray-700 p-6 space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-white">Safety Resources</h2>
+            <p className="text-gray-400">Important information and support services</p>
           </div>
-          <div>
-            <h3 className="text-xl font-semibold text-white">Emergency Contacts</h3>
-            <p className="text-red-200">Immediate assistance and support</p>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {emergencyContacts.map((contact, index) => (
-            <div key={index} className="bg-red-900/20 rounded-xl border border-red-800 p-4">
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="text-white font-semibold">{contact.name}</h4>
-                <button className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition duration-200">
-                  Call
-                </button>
+          {/* Emergency Contacts */}
+          <div className="bg-gradient-to-br from-red-900/30 to-red-800/20 rounded-2xl border border-red-700 p-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center">
+                <span className="text-white text-2xl">🚨</span>
               </div>
-              <p className="text-red-300 text-2xl font-bold mb-1">{contact.number}</p>
-              <p className="text-red-200 text-sm">{contact.description}</p>
+              <div>
+                <h3 className="text-xl font-semibold text-white">Emergency Contacts</h3>
+                <p className="text-red-200">Immediate assistance and support</p>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Resource Categories */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Category Navigation */}
-        <div className="lg:col-span-1">
-          <div className="bg-gray-700/50 rounded-2xl border border-gray-600 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Categories</h3>
-            <nav className="space-y-2">
-              {[
-                { id: 'safety', label: 'Safety Guides', icon: '🛡️' },
-                { id: 'emergency', label: 'Emergency Info', icon: '🚨' },
-                { id: 'legal', label: 'Legal Resources', icon: '⚖️' }
-              ].map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`w-full flex items-center px-4 py-3 text-left rounded-xl transition-all duration-200 ${
-                    activeCategory === category.id
-                      ? 'bg-blue-600 text-white shadow-lg'
-                      : 'text-gray-300 hover:bg-gray-600 hover:text-white'
-                  }`}
-                >
-                  <span className="text-lg mr-3">{category.icon}</span>
-                  <span className="font-medium">{category.label}</span>
-                </button>
-              ))}
-            </nav>
-          </div>
-        </div>
-
-        {/* Resources Grid */}
-        <div className="lg:col-span-3">
-          <div className="bg-gray-700/50 rounded-2xl border border-gray-600 p-6">
-            <h3 className="text-xl font-semibold text-white mb-6">
-              {activeCategory === 'safety' && 'Safety Guides'}
-              {activeCategory === 'emergency' && 'Emergency Information'}
-              {activeCategory === 'legal' && 'Legal Resources'}
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {resources[activeCategory].map((resource, index) => (
-                <div key={index} className="bg-gray-600/30 rounded-2xl border border-gray-500 p-6 hover:border-gray-400 transition duration-200">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <span className="text-2xl">{resource.icon}</span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-white font-semibold text-lg">{resource.title}</h4>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getTypeColor(resource.type)}`}>
-                          {resource.type}
-                        </span>
-                      </div>
-                      <p className="text-gray-300 mb-4">{resource.description}</p>
-                      <div className="flex space-x-3">
-                        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition duration-200">
-                          View Details
-                        </button>
-                        <button className="px-4 py-2 bg-gray-500 hover:bg-gray-400 text-white text-sm rounded-lg transition duration-200">
-                          Download
-                        </button>
-                      </div>
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {emergencyContacts.map((contact, index) => (
+                <div key={index} className="bg-red-900/20 rounded-xl border border-red-800 p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="text-white font-semibold">{contact.name}</h4>
+                    <button className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition duration-200">
+                      Call
+                    </button>
                   </div>
+                  <p className="text-red-300 text-2xl font-bold mb-1">{contact.number}</p>
+                  <p className="text-red-200 text-sm">{contact.description}</p>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Resource Categories */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Category Navigation */}
+            <div className="lg:col-span-1">
+              <div className="bg-gray-700/50 rounded-2xl border border-gray-600 p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Categories</h3>
+                <nav className="space-y-2">
+                  {[
+                    { id: 'safety', label: 'Safety Guides', icon: '🛡️' },
+                    { id: 'emergency', label: 'Emergency Info', icon: '🚨' },
+                    { id: 'legal', label: 'Legal Resources', icon: '⚖️' },
+                    { id: 'support', label: 'Support Services', icon: '🤝' }
+                  ].map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => setActiveCategory(category.id)}
+                      className={`w-full flex items-center px-4 py-3 text-left rounded-xl transition-all duration-200 ${
+                        activeCategory === category.id
+                          ? 'bg-blue-600 text-white shadow-lg'
+                          : 'text-gray-300 hover:bg-gray-600 hover:text-white'
+                      }`}
+                    >
+                      <span className="text-lg mr-3">{category.icon}</span>
+                      <span className="font-medium">{category.label}</span>
+                    </button>
+                  ))}
+                </nav>
+              </div>
+            </div>
+
+            {/* Resources Grid */}
+            <div className="lg:col-span-3">
+              <div className="bg-gray-700/50 rounded-2xl border border-gray-600 p-6">
+                <h3 className="text-xl font-semibold text-white mb-6">
+                  {activeCategory === 'safety' && 'Safety Guides'}
+                  {activeCategory === 'emergency' && 'Emergency Information'}
+                  {activeCategory === 'legal' && 'Legal Resources'}
+                  {activeCategory === 'support' && 'Support Services'}
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {resources[activeCategory].map((resource, index) => (
+                    <div key={index} className="bg-gray-600/30 rounded-2xl border border-gray-500 p-6 hover:border-gray-400 transition duration-200">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <span className="text-2xl">{resource.icon}</span>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="text-white font-semibold text-lg">{resource.title}</h4>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getTypeColor(resource.type)}`}>
+                              {resource.type}
+                            </span>
+                          </div>
+                          <p className="text-gray-300 mb-4">{resource.description}</p>
+                          <div className="flex space-x-3">
+                            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition duration-200">
+                              View Details
+                            </button>
+                            <button className="px-4 py-2 bg-gray-500 hover:bg-gray-400 text-white text-sm rounded-lg transition duration-200">
+                              Download
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Tips */}
+          <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 rounded-2xl border border-blue-700 p-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Quick Safety Tips</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="text-center p-4">
+                <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-white text-xl">👀</span>
+                </div>
+                <p className="text-white text-sm">Stay aware of your surroundings</p>
+              </div>
+              <div className="text-center p-4">
+                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-white text-xl">📱</span>
+                </div>
+                <p className="text-white text-sm">Keep emergency numbers handy</p>
+              </div>
+              <div className="text-center p-4">
+                <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-white text-xl">🏠</span>
+                </div>
+                <p className="text-white text-sm">Secure your home properly</p>
+              </div>
+              <div className="text-center p-4">
+                <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-white text-xl">🤝</span>
+                </div>
+                <p className="text-white text-sm">Report suspicious activities</p>
+              </div>
             </div>
           </div>
         </div>
