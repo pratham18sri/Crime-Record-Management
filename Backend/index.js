@@ -15,7 +15,7 @@ app.use(cookieparser());
 
 // CORS middleware must come BEFORE routes
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://crime-record-management-4.onrender.com",
     credentials: true
 }));
 

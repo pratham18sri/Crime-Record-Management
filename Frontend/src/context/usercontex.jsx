@@ -4,7 +4,7 @@ import axios from 'axios';
 export const dataContext = createContext();
 
 function UserContext({ children }) {
-        const serverUrl = "http://localhost:8000";
+        const serverUrl = "https://crime-record-management-3.onrender.com";
         const [currentUser, setCurrentUser] = useState(null);
 
             const fetchCurrentUser = async () => {
