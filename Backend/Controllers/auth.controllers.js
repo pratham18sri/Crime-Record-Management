@@ -46,8 +46,8 @@ export const signUp=async (req, res) => {
         //cookie ma store krne se user ko login krne ki zarurat nahi hoti
         res.cookie("token",token,{
             httpOnly:true,
-            secure:process.env.NODE_ENV === "production",
-            sameSite:"strict",
+            secure:true,
+            sameSite:"None",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days din k baad y cookies expire ho jayegi
         })
 
@@ -82,8 +82,8 @@ export const login = async (req, res) => {
             const token = await generateToken('police-officer');
             res.cookie("token", token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict",
+                 secure:true,
+                 sameSite:"None",
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
             return res.status(200).json({ message: 'Login successful', role: 'police', user: { username: POLICE_ID, role: 'police' } });
@@ -109,8 +109,8 @@ export const login = async (req, res) => {
         // Set cookie
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+             secure:true,
+            sameSite:"None",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
         res.status(200).json({
