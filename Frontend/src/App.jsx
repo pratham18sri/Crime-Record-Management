@@ -22,6 +22,11 @@ const App = () => {
       <Route path='/dashboard/user/resources' element={<Resources/>} />
       <Route path='/dashboard/user/settings' element={<Settings/>} />
       <Route path='/dashboard/police' element={<PoliceDashboard/>} />
+      <Route path='/dashboard/police/reports' element={<PoliceDashboard/>} />
+      <Route path='/dashboard/police/cases' element={<PoliceDashboard/>} />
+      <Route path='/dashboard/police/emergencies' element={<PoliceDashboard/>} />
+      <Route path='/dashboard/police/records' element={<PoliceDashboard/>} />
+      <Route path='/dashboard/police/communications' element={<PoliceDashboard/>} />
     </Routes>
   )
 }
