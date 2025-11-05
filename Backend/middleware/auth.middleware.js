@@ -27,3 +27,16 @@ export const authenticate = async (req, res, next) => {
 };
 
 export default authenticate;
+
+export const requirePolice = (req, res, next) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'Not authenticated' });
+    if (req.user.role && req.user.role === 'police') return next();
+    // Also allow pseudo police token
+    if (req.user.username && (req.user.username === process.env.POLICE_ID || req.user.username === 'police-officer')) return next();
+    return res.status(403).json({ message: 'Forbidden: Police only' });
+  } catch (error) {
+    console.error('Role check error', error);
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+};

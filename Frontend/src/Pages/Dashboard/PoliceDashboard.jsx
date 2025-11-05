@@ -1,4 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 import { dataContext } from '../../context/usercontex.jsx';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,6 +7,31 @@ const PoliceDashboard = () => {
   const { currentUser } = useContext(dataContext);
   const [activeTab, setActiveTab] = useState('overview');
   const navigate = useNavigate();
+  const [reports, setReports] = useState([]);
+  const [loadingReports, setLoadingReports] = useState(false);
+  const [reportsError, setReportsError] = useState(null);
+
+  const { serverUrl } = useContext(dataContext);
+
+  const fetchReports = async () => {
+    try {
+      setLoadingReports(true);
+      setReportsError(null);
+      const { data } = await axios.get(`${serverUrl}/api/crime/all`, { withCredentials: true });
+      if (data.success) setReports(data.reports || []);
+      else setReportsError(data.message || 'Failed to load reports');
+    } catch (err) {
+      console.error('Fetch reports error', err);
+      setReportsError(err.message || 'Failed to load reports');
+    } finally {
+      setLoadingReports(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'reports') fetchReports();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   // Mock data for police dashboard
   const dashboardData = {
@@ -33,7 +59,7 @@ const PoliceDashboard = () => {
       case 'overview':
         return <OverviewTab data={dashboardData} />;
       case 'reports':
-        return <div className="text-white">View and Manage Reports</div>;
+        return <ReportsTab reports={reports} loading={loadingReports} error={reportsError} refresh={() => fetchReports()} />;
       case 'cases':
         return <div className="text-white">Active Cases</div>;
       case 'emergencies':
@@ -133,7 +159,95 @@ const PoliceDashboard = () => {
   );
 };
 
+
 // Overview Tab Component
+// Reports tab component
+const ReportsTab = ({ reports, loading, error, refresh }) => {
+  const { serverUrl } = useContext(dataContext);
+  const [selected, setSelected] = useState(null);
+
+  const assignToMe = async (reportId) => {
+    try {
+      await axios.put(`${serverUrl}/api/crime/${reportId}/assign`, {}, { withCredentials: true });
+      refresh();
+    } catch (err) {
+      console.error('Assign error', err);
+      alert('Failed to assign report');
+    }
+  };
+
+  const changeStatus = async (reportId, status) => {
+    try {
+      await axios.put(`${serverUrl}/api/crime/${reportId}/status`, { status }, { withCredentials: true });
+      refresh();
+    } catch (err) {
+      console.error('Status update error', err);
+      alert('Failed to update status');
+    }
+  };
+
+  return (
+    <div className="space-y-6 text-white">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Manage Reports</h2>
+        <button onClick={refresh} className="px-3 py-2 bg-blue-600 rounded">Refresh</button>
+      </div>
+
+      {loading && <p>Loading reports...</p>}
+      {error && <div className="text-red-400">{error}</div>}
+
+      <div className="space-y-4">
+        {reports.map(r => (
+          <div key={r._id} className="bg-gray-700/40 p-4 rounded-lg border border-gray-600">
+            <div className="flex justify-between items-start">
+              <div>
+                <h4 className="font-semibold text-white">{r.title}</h4>
+                <p className="text-sm text-gray-300">Case ID: {r._id}</p>
+                <p className="text-sm text-gray-300">Reported by: {r.reportedBy?.username || 'Anonymous'}</p>
+                <p className="text-sm text-gray-300">Location: {r.location?.address}, {r.location?.city}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-300">Status: <span className="font-semibold">{r.status}</span></p>
+                <p className="text-sm text-gray-400">{new Date(r.createdAt).toLocaleString()}</p>
+              </div>
+            </div>
+
+            <div className="mt-3 flex items-center space-x-3">
+              <button onClick={() => setSelected(r)} className="px-3 py-2 bg-gray-600 rounded">View</button>
+              <button onClick={() => assignToMe(r._id)} className="px-3 py-2 bg-green-600 rounded">Assign to me</button>
+              <select defaultValue={r.status} onChange={(e) => changeStatus(r._id, e.target.value)} className="px-2 py-1 bg-gray-600 rounded">
+                <option value="pending">pending</option>
+                <option value="investigating">investigating</option>
+                <option value="resolved">resolved</option>
+                <option value="closed">closed</option>
+              </select>
+            </div>
+
+            {selected?._id === r._id && (
+              <div className="mt-4 bg-gray-800 p-3 rounded">
+                <p className="text-sm text-gray-300">{r.description}</p>
+                {r.evidence?.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-300">Evidence:</p>
+                    <ul className="text-sm text-gray-400">
+                      {r.evidence.map((e, idx) => (
+                        <li key={idx}><a className="underline text-blue-300" href={e.url} target="_blank" rel="noreferrer">{e.description || e.url}</a></li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <div className="mt-2 text-right">
+                  <button onClick={() => setSelected(null)} className="px-3 py-1 bg-gray-600 rounded">Close</button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const OverviewTab = ({ data }) => (
   <div className="space-y-6">
     <div className="flex justify-between items-center">

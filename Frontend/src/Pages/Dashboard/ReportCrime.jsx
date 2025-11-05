@@ -1,14 +1,30 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { dataContext } from '../../context/usercontex.jsx';
 
 const ReportCrime = () => {
+  const navigate = useNavigate();
+  const { serverUrl } = useContext(dataContext);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
   const [formData, setFormData] = useState({
+    title: '',
     incidentType: '',
     date: '',
     time: '',
-    location: '',
+    location: {
+      address: '',
+      city: '',
+      state: '',
+      pincode: ''
+    },
     description: '',
     suspectInfo: '',
-    witnesses: '',
+    witnesses: [],
     emergency: false
   });
 
@@ -23,29 +39,118 @@ const ReportCrime = () => {
     'Other'
   ];
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
-    alert('Crime report submitted successfully! Case ID: CR-' + Date.now());
-    // Reset form
-    setFormData({
-      incidentType: '',
-      date: '',
-      time: '',
-      location: '',
-      description: '',
-      suspectInfo: '',
-      witnesses: '',
-      emergency: false
-    });
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Format the date and time
+      const dateTime = new Date(`${formData.date}T${formData.time}`);
+      
+      // Format witnesses into array of objects
+      const witnessesArray = formData.witnesses
+        ? formData.witnesses.split('\n').map(witness => {
+            const [name, contact, ...statementParts] = witness.split(',').map(str => str.trim());
+            return {
+              name,
+              contact,
+              statement: statementParts.join(',').trim()
+            };
+          })
+        : [];
+
+      // Create form data for file upload
+      const formDataToSend = new FormData();
+      
+      // Add files if any
+      selectedFiles.forEach((file, index) => {
+        formDataToSend.append('evidence', file);
+      });
+
+      // Create the crime report data
+      const crimeData = {
+        title: `${formData.incidentType} Report`,
+        description: formData.description,
+        location: formData.location,
+        incidentDate: dateTime.toISOString(),
+        witnesses: witnessesArray,
+        suspectInfo: formData.suspectInfo,
+        emergency: formData.emergency
+      };
+
+      // Add the crime data to form data
+      formDataToSend.append('crimeData', JSON.stringify(crimeData));
+
+      // Send the report to the backend
+      const response = await axios.post(
+        `${serverUrl}/api/crime/report`,
+        formDataToSend,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          withCredentials: true
+        }
+      );
+
+      if (response.data.success) {
+        alert('Crime report submitted successfully!');
+        navigate('/dashboard/my-cases');
+      } else {
+        throw new Error(response.data.message || 'Failed to submit report');
+      }
+
+      // Reset form
+      setFormData({
+        title: '',
+        incidentType: '',
+        date: '',
+        time: '',
+        location: {
+          address: '',
+          city: '',
+          state: '',
+          pincode: ''
+        },
+        description: '',
+        suspectInfo: '',
+        witnesses: [],
+        emergency: false
+      });
+      setSelectedFiles([]);
+      
+    } catch (error) {
+      setError(error.message || 'Failed to submit crime report');
+      console.error('Error submitting report:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    
+    if (name.includes('location.')) {
+      const locationField = name.split('.')[1];
+      setFormData(prev => ({
+        ...prev,
+        location: {
+          ...prev.location,
+          [locationField]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value
+      }));
+    }
   };
 
   return (
@@ -127,20 +232,64 @@ const ReportCrime = () => {
             />
           </div>
 
-          {/* Location */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-white mb-2">
-              Location *
-            </label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              required
-              placeholder="Enter exact location or address"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+          {/* Location Fields */}
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold text-white mb-2">
+                Address *
+              </label>
+              <input
+                type="text"
+                name="location.address"
+                value={formData.location.address}
+                onChange={handleChange}
+                required
+                placeholder="Enter street address"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-white mb-2">
+                City *
+              </label>
+              <input
+                type="text"
+                name="location.city"
+                value={formData.location.city}
+                onChange={handleChange}
+                required
+                placeholder="Enter city"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-white mb-2">
+                State *
+              </label>
+              <input
+                type="text"
+                name="location.state"
+                value={formData.location.state}
+                onChange={handleChange}
+                required
+                placeholder="Enter state"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-white mb-2">
+                Pincode *
+              </label>
+              <input
+                type="text"
+                name="location.pincode"
+                value={formData.location.pincode}
+                onChange={handleChange}
+                required
+                placeholder="Enter pincode"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
           </div>
 
           {/* Description */}
@@ -215,13 +364,45 @@ const ReportCrime = () => {
           <p className="text-gray-400 text-sm mb-4">
             Upload photos, videos, or documents related to the incident
           </p>
-          <button
-            type="button"
-            className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg border border-gray-600 transition duration-200"
+          <input
+            type="file"
+            multiple
+            onChange={handleFileChange}
+            className="hidden"
+            id="evidence-upload"
+            accept="image/*,video/*,.pdf,.doc,.docx"
+          />
+          <label
+            htmlFor="evidence-upload"
+            className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg border border-gray-600 transition duration-200 cursor-pointer inline-block"
           >
             Choose Files
-          </button>
+          </label>
+          {selectedFiles.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-300">Selected files:</p>
+              <ul className="text-sm text-gray-400">
+                {selectedFiles.map((file, index) => (
+                  <li key={index}>{file.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-900/20 border border-red-700 rounded-lg p-4 text-red-400">
+            {error}
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center text-blue-400">
+            Submitting report, please wait...
+          </div>
+        )}
 
         {/* Submit Button */}
         <div className="flex justify-end space-x-4 pt-6 border-t border-gray-700">
