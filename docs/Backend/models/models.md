@@ -9,30 +9,33 @@
 
 ## Description
 
-This project defines two models: `User` and `Crime`.
+This project defines data models for users and crimes, likely for an application tracking or analyzing crime-related data.
 
 ## How to Use
 
-The project defines data models and doesn't have a direct user interface.  These models are intended to be used in conjunction with a database and application logic.
+The project provides data models. Usage depends on the specific framework or application context where these models are employed. Requires Node.js and a compatible database.
 
 ## Technologies Used
 
 *   JavaScript
+*   Node.js (likely)
+*   Database (e.g., MongoDB, PostgreSQL - implementation specific)
 
 ## Architecture or Code Overview
 
-The project comprises two JavaScript files:
+The project consists of two core model files:
 
-*   `crime.model.js`: Defines the `Crime` model.  (Implementation details are unavailable)
-*   `user.model.js`: Defines the `User` model. (Implementation details are unavailable)
+*   `crime.model.js`: Defines the structure and properties of crime data (details in file).
+*   `user.model.js`: Defines the structure and properties of user data (details in file).
+
+The models are likely used within a Node.js application.
 
 ## Known Issues / Improvements
 
-*   Implementations for the `Crime` and `User` models are required.
-*   Add database integration.
-*   Implement data validation.
+*   Requires detailed documentation within each model file (`crime.model.js` and `user.model.js`) regarding the model fields, data types, and potential relationships with other data.
+*   The project lacks usage examples or integration details.
+*   Needs a clear description for data relationships between user and crime models.
 
 ## Additional Notes or References
 
-*   Authors: Anonymous
-*   Keywords:  (None provided)
+*   See the individual model files (`crime.model.js` and `user.model.js`) for their specific attributes and implementation details.

@@ -2,34 +2,31 @@
 
 ## Description
 
-This middleware provides authentication and authorization functionalities for a Node.js application, specifically using JWTs (JSON Web Tokens) to verify user sessions. It handles token verification, user retrieval, and role-based access control.
+This middleware provides authentication and authorization functionalities for a Node.js application, specifically using JSON Web Tokens (JWT) and user roles. It handles token verification, user retrieval, and role-based access control.
 
 ## How to Use
 
-1.  **Installation:**
+### Installation
 
-    No specific installation steps are needed, as this is a middleware for an existing Node.js project. Ensure that `jsonwebtoken` is installed:
+No specific installation is needed; this is middleware for an existing application.
 
-    ```bash
-    npm install jsonwebtoken
-    ```
+### Usage
 
-2.  **Usage:**
-
-    Import and use the `authenticate` middleware to protect routes that require user authentication.  Use `requirePolice` middleware for routes that only allow access to users with 'police' role.
+1.  **Import:**
 
     ```javascript
-    import express from 'express';
     import { authenticate, requirePolice } from './auth.middleware.js';
+    ```
 
-    const app = express();
+2.  **Usage in routes:**
 
-    // Protected route requiring authentication
+    ```javascript
+    // Example usage for protected routes
     app.get('/profile', authenticate, (req, res) => {
       res.json({ user: req.user });
     });
 
-    // Protected route requiring police role
+    // Example usage for police-only routes
     app.get('/police-only', authenticate, requirePolice, (req, res) => {
       res.json({ message: 'Police access granted' });
     });
@@ -37,26 +34,33 @@ This middleware provides authentication and authorization functionalities for a 
 
 ## Technologies Used
 
-*   **Node.js**
-*   **Express.js** (Implied)
-*   **jsonwebtoken**
-*   **Mongoose** (Implied, for User model)
+*   Node.js
+*   `jsonwebtoken`: For JWT creation and verification.
+*   `express`: Assumed for routing and middleware integration.
+*   MongoDB (`User` model):  For user data retrieval. (Dependency)
+*   `.env`: For environment variables (JWT_SECRET, POLICE_ID).
 
 ## Architecture or Code Overview
 
-The middleware consists of two main functions:
-
-*   `authenticate`:  This function attempts to retrieve and verify a JWT from the `token` cookie. It then retrieves the user from the database based on the token's payload (user ID).  Handles "police-officer" as a special case where a user is mocked to allow access.
-
-*   `requirePolice`: This function checks if the authenticated user has the 'police' role, or if user is a valid mock police user, and grants access accordingly.
+*   **`authenticate` middleware:**
+    *   Retrieves the JWT from the `token` cookie.
+    *   Verifies the token's validity using `jwt.verify()`.
+    *   Retrieves the user from the database using `User.findById()`, excluding the password.
+    *   Attaches the user object to `req.user`.
+    *   Handles scenarios for missing tokens, invalid tokens, and non-existent users.
+    *   Includes special handling for a "police-officer" ID, allowing for a pseudo user.
+*   **`requirePolice` middleware:**
+    *   Checks if the user is authenticated ( `req.user` exists).
+    *   Verifies if the user's role is "police" or if user matches the pseudo police user.
+    *   Returns a 403 Forbidden response if the user is not authorized.
 
 ## Known Issues / Improvements
 
-*   **Error Handling:** The error handling could be improved with more specific error messages and logging.
-*   **Token Storage:** Currently relies on cookies. This may need adjustments depending on the frontend's needs.
-*   **Testing:** Unit tests should be added to verify functionality.
+*   Error handling could be improved (e.g., more specific error messages).
+*   Token storage is cookie-based; consider alternatives like `localStorage` or `sessionStorage` or HTTP Headers for different security or UX considerations.
+*   Consider implementing refresh tokens for extended sessions.
 
 ## Additional Notes or References
 
-*   The code assumes the existence of a `User` model with an `findById` method.
-*   Requires `JWT_SECRET` and optionally `POLICE_ID` environment variables to be set.
+*   Requires the existence of a `User` model and appropriate environment variables (`JWT_SECRET`, `POLICE_ID`).
+*   Requires a working JWT secret key to be set in your `.env` file.

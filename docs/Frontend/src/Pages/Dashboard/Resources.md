@@ -2,32 +2,43 @@
 
 ## Description
 
-This React component provides a user-friendly interface to access various safety and support resources. It categorizes information into safety guides, emergency contacts, legal resources, and support services. The component also includes quick safety tips and emergency contact information.
+The Safety Resources component provides a user-friendly interface for accessing safety guides, emergency contacts, legal resources, and support services. It categorizes resources for easy navigation and includes quick safety tips.
+
+## How to Use
+
+This component is designed to be integrated into a React application.  No specific installation or CLI usage is applicable as it is a UI component.
+
+To use:
+
+1.  **Import the component:** `import Resources from './Resources';`
+2.  **Render the component:** `<Resources />`
 
 ## Technologies Used
 
 *   React
-*   Tailwind CSS (for styling)
+*   JavaScript (ES6+)
+*   Tailwind CSS (for styling - utilized classes for styling in the JSX)
 
 ## Architecture or Code Overview
 
-*   **`Resources.jsx`:** The main component that renders the UI.
-    *   **State Management:** Uses `useState` to manage the currently active category.
-    *   **Data Structures:** Defines `resources` (an object containing resource categories) and `emergencyContacts` (an array of contact objects).
-    *   **Helper Functions:** `getTypeColor` determines the styling based on the resource type.
-    *   **UI Structure:**
-        *   Displays emergency contacts with call buttons.
-        *   Provides a category navigation for switching between resource categories.
-        *   Renders resources based on the selected category, displaying titles, descriptions, and types.
-        *   Includes a section for quick safety tips.
+The `Resources` component manages and displays safety-related information categorized for easy access.
+
+*   **State Management:** Uses `useState` to manage the currently active category.
+*   **Data Structures:** The `resources` object stores resource data categorized by topic (safety, emergency, legal, support). The `emergencyContacts` array stores contact details.
+*   **Dynamic Rendering:**  The component dynamically renders content based on the `activeCategory` state, displaying different resources for each category.
+*   **Styling:** Utilizes Tailwind CSS utility classes directly within the JSX for styling and layout.
+*   **Emergency Contacts Section:** Displays emergency contact information.
+*   **Category Navigation:** Provides a navigation menu to switch between different resource categories.
+*   **Resource Display:** Displays a list of resources for the selected category.
+*   **Quick Tips Section:** Presents brief safety tips.
+*   **`getTypeColor` Function:** A helper function that returns the Tailwind CSS class names for background and text colors based on the resource type.
 
 ## Known Issues / Improvements
 
-*   Implement the "Call" button functionality.
-*   Implement the "View Details" and "Download" buttons.
-*   Add dynamic data fetching for resources.
-*   Enhance mobile responsiveness.
+*   Implement the "Call" and "Download" buttons with actual functionality (e.g., triggering a phone call or initiating a download).
+*   Add dynamic content loading (e.g., from an API or database) instead of hardcoded data.
+*   Add more detailed resource pages for the "View Details" button.
 
 ## Additional Notes or References
 
-*   Styling is done using Tailwind CSS utility classes.
+The component utilizes Tailwind CSS for styling.  No external libraries or dependencies are used apart from React itself.
