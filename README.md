@@ -86,7 +86,40 @@ This project appears to be a web application with a backend and frontend, potent
 *   Further development is likely needed to connect the frontend and backend.
 *   Database integration would need to be implemented.
 
+## Deployment
+
+### Render Deployment
+
+This application is configured for deployment on Render. See `RENDER_DEPLOYMENT.md` for detailed deployment instructions.
+
+**Quick Setup:**
+
+1. **Backend**: Create a Web Service on Render
+   - Build Command: `cd Backend && npm install`
+   - Start Command: `cd Backend && npm start`
+   - Set environment variables (see `RENDER_DEPLOYMENT.md`)
+
+2. **Frontend**: Create a Static Site on Render
+   - Build Command: `cd Frontend && npm install && npm run build`
+   - Publish Directory: `Frontend/dist`
+   - Set `VITE_SERVER_URL` environment variable to your backend URL
+
+**Environment Variables Required:**
+
+Backend:
+- `PORT` (default: 10000 for Render)
+- `NODE_ENV=production`
+- `mongoURI` (MongoDB connection string)
+- `JWT_SECRET` (strong secret key)
+- `POLICE_ID` (default: 2315001656)
+- `POLICE_PWD` (police password)
+- `CLIENT_URL` (frontend URL: https://crime-record-management-4.onrender.com)
+
+Frontend:
+- `VITE_SERVER_URL` (backend URL)
+
 ## Additional Notes or References
 
 *   No specific license or credits were provided.
 *   Consider adding more descriptive comments within the source code.
+*   For production deployment, see `RENDER_DEPLOYMENT.md`

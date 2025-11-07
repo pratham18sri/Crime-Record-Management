@@ -16,8 +16,26 @@ app.use(express.json());
 app.use(cookieparser());
 
 // CORS middleware must come BEFORE routes
+const allowedOrigins = process.env.CLIENT_URL 
+    ? process.env.CLIENT_URL.split(',')
+    : ["http://localhost:5173", "https://crime-record-management-4.onrender.com"];
+
+const isProduction = process.env.NODE_ENV === 'production';
+
 app.use(cors({
-    origin: "https://crime-record-management-4.onrender.com",
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else if (!isProduction) {
+            // Allow all origins in development
+            callback(null, true);
+        } else {
+            // Reject in production if origin not in allowed list
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 
