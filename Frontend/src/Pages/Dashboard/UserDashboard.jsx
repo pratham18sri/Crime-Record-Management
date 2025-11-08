@@ -3,9 +3,14 @@ import { dataContext } from '../../context/usercontex.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const UserDashboard = () => {
-  const { currentUser } = useContext(dataContext);
+  const { currentUser, logout } = useContext(dataContext);
   const [activeTab, setActiveTab] = useState('overview');
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
 
   // Mock data for dashboard
   const dashboardData = {
@@ -71,6 +76,12 @@ const UserDashboard = () => {
               <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                 <span className="text-white font-semibold">{(currentUser?.username || currentUser?.firstname || 'U').charAt(0)}</span>
               </div>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-200"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>

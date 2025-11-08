@@ -44,10 +44,11 @@ export const signUp=async (req, res) => {
         let token=await generateToken(user._id);
         //token ko cookie ma store krna
         //cookie ma store krne se user ko login krne ki zarurat nahi hoti
+        const isProd = process.env.NODE_ENV === 'production';
         res.cookie("token",token,{
             httpOnly:true,
-            secure:true,
-            sameSite:"None",
+            secure:isProd,
+            sameSite:isProd ? "None" : "Lax",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days din k baad y cookies expire ho jayegi
         })
 
@@ -80,10 +81,11 @@ export const login = async (req, res) => {
             }
             // generate a token for a pseudo-police user
             const token = await generateToken('police-officer');
+            const isProd = process.env.NODE_ENV === 'production';
             res.cookie("token", token, {
                 httpOnly: true,
-                 secure:true,
-                 sameSite:"None",
+                secure: isProd,
+                sameSite: isProd ? "None" : "Lax",
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
             return res.status(200).json({ message: 'Login successful', role: 'police', user: { username: POLICE_ID, role: 'police' } });
@@ -107,10 +109,11 @@ export const login = async (req, res) => {
         // Generate token
         const token = await generateToken(existingUser._id);
         // Set cookie
+        const isProd = process.env.NODE_ENV === 'production';
         res.cookie("token", token, {
             httpOnly: true,
-             secure:true,
-            sameSite:"None",
+             secure:isProd,
+            sameSite:isProd ? "None" : "Lax",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
         res.status(200).json({
@@ -133,7 +136,19 @@ export const login = async (req, res) => {
 //3 LOGOUT
 export const logout=async(req,res)=>{
     try{
-        res.clearCookie("token");
+        const isProd = process.env.NODE_ENV === 'production';
+        const cookieOptions = {
+            httpOnly: true,
+            secure: isProd,
+            sameSite: isProd ? "None" : "Strict",
+            path: "/",
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        };
+        if(isProd){
+            cookieOptions.sameSite = "None";
+        }
+        res.cookie("token", "", cookieOptions);
+        res.clearCookie("token", cookieOptions);
         return res.status(200).json({message:"User logged out successfully"});
     }catch(error){
         res.status(500).json({message: error.message});

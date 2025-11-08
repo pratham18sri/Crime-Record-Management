@@ -4,7 +4,7 @@ import axios from 'axios';
 import { dataContext } from '../../context/usercontex.jsx';
 
 const Login = () => {
-  const { serverUrl } = useContext(dataContext);
+  const { serverUrl, refreshUser } = useContext(dataContext);
   const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
@@ -35,6 +35,7 @@ const Login = () => {
         }
       );
       console.log('\u2705 Login successful:', data);
+      await refreshUser();
       const role = data?.user?.role || data?.role;
       if (role === 'police') {
         navigate('/dashboard/police');

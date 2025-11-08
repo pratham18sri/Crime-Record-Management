@@ -1,35 +1,60 @@
-# My Project
+# Controllers Code
 
-**Folder Structure:**
+## Folder Structure
 
 ```
+.
 ├── auth.controllers.js
 ├── crime.controllers.js
 └── user.controllers.js
 ```
 
-**Description:**
+## Description
 
-This project comprises controller modules for authentication, crime-related operations, and user management.
+This project defines controllers for authentication, crime-related functionalities, and user management.
 
-**How to Use:**
+## How to Use
 
-(Usage instructions would be here if individual controller documentation was provided)
+To use these controllers, they must be imported and integrated into your application's routing system. Example:
 
-**Technologies Used:**
+```javascript
+// Example in Express.js
+const express = require('express');
+const router = express.Router();
+const { login, register } = require('./auth.controllers.js');
+const { addCrime, getCrimes } = require('./crime.controllers.js');
+const { getUser, updateUser } = require('./user.controllers.js');
 
-*   (Technologies used would be listed here if individual controller documentation was provided)
+router.post('/auth/login', login);
+router.post('/auth/register', register);
+router.post('/crime/add', addCrime);
+router.get('/crime', getCrimes);
+router.get('/user/:id', getUser);
+router.put('/user/:id', updateUser);
 
-**Architecture or Code Overview:**
+module.exports = router;
+```
 
-*   `auth.controllers.js`: (Description of authentication controller logic would be here)
-*   `crime.controllers.js`: (Description of crime controller logic would be here)
-*   `user.controllers.js`: (Description of user controller logic would be here)
+## Technologies Used
 
-**Known Issues / Improvements:**
+*   JavaScript
 
-*   (Known issues and potential improvements would be listed here if individual controller documentation was provided)
+## Architecture or Code Overview
 
-**Additional Notes or References:**
+The project is structured with separate controller files for different functionalities:
 
-*   (Any relevant licensing, credits, or related tools would be listed here)
+*   `auth.controllers.js`: Handles authentication-related operations (login, registration).
+*   `crime.controllers.js`: Manages crime-related functionalities (adding, retrieving crime data).
+*   `user.controllers.js`: Manages user-related operations (retrieving, updating user information).
+
+Each controller file is expected to export functions that handle specific requests, typically interacting with a data model or service layer.
+
+## Known Issues / Improvements
+
+*   Implement detailed controller logic within each file.
+*   Add error handling and input validation.
+*   Implement authentication and authorization mechanisms.
+
+## Additional Notes or References
+
+*   Project developed by Anonymous.

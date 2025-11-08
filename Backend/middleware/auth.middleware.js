@@ -4,7 +4,9 @@ import User from '../models/user.model.js';
 export const authenticate = async (req, res, next) => {
   try {
     const token = req.cookies?.token;
-    if (!token) return res.status(401).json({ message: 'Not authenticated' });
+    if (!token) {
+      return res.status(401).json({ message: 'Not authenticated' });
+    }
 
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     if (!payload?.id) return res.status(401).json({ message: 'Invalid token' });
