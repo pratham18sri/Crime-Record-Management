@@ -18,7 +18,7 @@ app.use(cookieparser());
 // CORS middleware must come BEFORE routes
 const allowedOrigins = process.env.CLIENT_URL 
     ? process.env.CLIENT_URL.split(',')
-    : ["http://localhost:5173", "https://crime-master.onrender.com", "https://crime-record-management-4.onrender.com"];
+    : ["https://crime-record-management-4.onrender.com"];
 
 const isProduction = process.env.NODE_ENV === 'production';
 
