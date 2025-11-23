@@ -4,7 +4,7 @@ import { dataContext } from '../../context/usercontex.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const PoliceDashboard = () => {
-  const { currentUser, logout } = useContext(dataContext);
+  const { currentUser, logout, refreshUser } = useContext(dataContext);
   const [activeTab, setActiveTab] = useState('overview');
   const navigate = useNavigate();
   const handleLogout = async () => {
@@ -21,11 +21,6 @@ const PoliceDashboard = () => {
     try {
       setLoadingReports(true);
       setReportsError(null);
-      // Ensure the current user is a police officer before requesting police-only endpoint
-      if (!currentUser || currentUser.role !== 'police') {
-        setReportsError('You must be logged in as a police officer to view all reports.');
-        return;
-      }
 
       const { data } = await axios.get(`${serverUrl}/api/crime/all`, { withCredentials: true });
       if (data.success) setReports(data.reports || []);
@@ -37,16 +32,39 @@ const PoliceDashboard = () => {
         setReportsError('Unauthorized. Please login as a police officer to view all reports.');
         return;
       }
-      setReportsError(err.message || 'Failed to load reports');
+      setReportsError(err?.response?.data?.message || err.message || 'Failed to load reports');
     } finally {
       setLoadingReports(false);
     }
   };
 
   useEffect(() => {
-    if (activeTab === 'reports') fetchReports();
+    if (activeTab !== 'reports') return;
+
+    // If currentUser is not loaded yet (null), try to refresh it first.
+    if (currentUser === null) {
+      (async () => {
+        try {
+          await refreshUser();
+          // after refresh, attempt fetchReports; server will enforce permissions
+          await fetchReports();
+        } catch {
+          // refreshUser swallows errors; ensure we attempt fetch and show message on 401
+          await fetchReports();
+        }
+      })();
+      return;
+    }
+
+    // If currentUser exists but not police, show message; otherwise fetch.
+    if (currentUser && currentUser.role !== 'police') {
+      setReportsError('You must be logged in as a police officer to view all reports.');
+      return;
+    }
+
+    if (currentUser && currentUser.role === 'police') fetchReports();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
+  }, [activeTab, currentUser]);
 
   // Mock data for police dashboard
   const dashboardData = {
