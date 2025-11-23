@@ -36,16 +36,19 @@ export const createCrimeReport = async (req, res) => {
             description: file.originalname
         }));
 
-        const newCrimeReport = new CrimeReport({
+        // Build the document data and only include reportedBy when available
+        const reportData = {
             title: title || `${payload.incidentType || 'Crime'} Report`,
             description,
             location,
             incidentDate: incidentDate ? new Date(incidentDate) : Date.now(),
-            reportedBy: req.user?._id || null,
             witnesses: witnesses || [],
             evidence,
             status: 'pending'
-        });
+        };
+        if (req.user?._id) reportData.reportedBy = req.user._id;
+
+        const newCrimeReport = new CrimeReport(reportData);
 
         const savedReport = await newCrimeReport.save();
         const populated = await savedReport.populate('reportedBy', 'firstname lastname email username');
@@ -53,6 +56,11 @@ export const createCrimeReport = async (req, res) => {
         res.status(201).json({ success: true, report: populated, message: 'Crime report submitted successfully' });
     } catch (error) {
         console.error('Error creating crime report:', error);
+        // If validation error from Mongoose, return 400 with details
+        if (error.name === 'ValidationError') {
+            const details = Object.values(error.errors).map(e => e.message);
+            return res.status(400).json({ success: false, message: 'Validation error', errors: details });
+        }
         res.status(500).json({ success: false, message: 'Error submitting crime report', error: error.message });
     }
 };

@@ -6,6 +6,7 @@ import crimeRouter from './Routes/crime.routes.js';
 import cookieparser from 'cookie-parser';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 
 const app = express();
 dotenv.config();
@@ -40,6 +41,17 @@ app.use(cors({
 
 // Serve uploaded evidence files
 app.use('/uploads', express.static(path.join(process.cwd(), 'Backend', 'uploads')));
+
+// Ensure uploads directory exists (important for multer destination on deployed hosts)
+try {
+    const uploadsPath = path.join(process.cwd(), 'Backend', 'uploads');
+    if (!fs.existsSync(uploadsPath)) {
+        fs.mkdirSync(uploadsPath, { recursive: true });
+        console.log('Created uploads directory at', uploadsPath);
+    }
+} catch (err) {
+    console.error('Failed to ensure uploads directory exists:', err);
+}
 
 // Routes
 app.use("/api", authRouter);

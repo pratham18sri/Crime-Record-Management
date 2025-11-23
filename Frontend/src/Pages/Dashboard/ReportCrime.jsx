@@ -126,7 +126,14 @@ const ReportCrime = () => {
       setSelectedFiles([]);
       
     } catch (error) {
-      setError(error.message || 'Failed to submit crime report');
+      // Prefer server-provided message or validation errors
+      const serverData = error?.response?.data;
+      if (serverData) {
+        const msg = serverData.message || (serverData.errors && serverData.errors.join('; '));
+        setError(msg || 'Failed to submit crime report');
+      } else {
+        setError(error.message || 'Failed to submit crime report');
+      }
       console.error('Error submitting report:', error);
     } finally {
       setLoading(false);
