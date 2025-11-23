@@ -17,7 +17,7 @@ const PoliceDashboard = () => {
 
   const { serverUrl } = useContext(dataContext);
 
-  const fetchReports = async () => {
+  const fetchReports = async (retry = true) => {
     try {
       setLoadingReports(true);
       setReportsError(null);
@@ -29,6 +29,17 @@ const PoliceDashboard = () => {
       console.error('Fetch reports error', err);
       // If unauthorized, guide the user to log in as police
       if (err?.response?.status === 401) {
+        // Try to refresh current user once (handles race where login cookie was just set)
+        if (retry) {
+          try {
+            await refreshUser();
+            // retry once without triggering another refresh
+            await fetchReports(false);
+            return;
+          } catch {
+            // fall through to show message
+          }
+        }
         setReportsError('Unauthorized. Please login as a police officer to view all reports.');
         return;
       }
