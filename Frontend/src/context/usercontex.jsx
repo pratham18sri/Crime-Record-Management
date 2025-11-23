@@ -6,6 +6,7 @@ export const dataContext = createContext();
 function UserContext({ children }) {
         const serverUrl = "https://crime-record-management-3.onrender.com";
         const [currentUser, setCurrentUser] = useState(null);
+        
 
             const fetchCurrentUser = async () => {
                 try {
