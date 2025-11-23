@@ -18,7 +18,7 @@ app.use(cookieparser());
 
 // CORS middleware must come BEFORE routes
 // Build allowed origins list. Prefer explicit CLIENT_URL, but include runtime clientOrigin as a fallback.
-const clientOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+const clientOrigin = process.env.CLIENT_URL ;
 const allowedOrigins = process.env.CLIENT_URL
     ? process.env.CLIENT_URL.split(',').map(s => s.trim()).filter(Boolean)
     : [clientOrigin, 'https://crime-record-management-3.onrender.com', 'https://crime-record-management-4.onrender.com'];

@@ -5,7 +5,7 @@ export const dataContext = createContext();
 
 function UserContext({ children }) {
         // Prefer environment override; default to the Render deployment domain (no localhost fallback)
-        const serverUrl = import.meta.env.VITE_SERVER_URL || "https://crime-record-management-3.onrender.com";
+        const serverUrl ="https://crime-record-management-3.onrender.com";
         const [currentUser, setCurrentUser] = useState(null);
         
 
