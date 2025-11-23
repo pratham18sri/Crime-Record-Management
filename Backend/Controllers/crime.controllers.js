@@ -121,7 +121,7 @@ export const updateStatus = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
-        const valid = ['pending', 'investigating', 'resolved', 'closed'];
+        const valid = ['pending', 'accepted', 'rejected', 'investigating', 'resolved', 'closed'];
         if (!valid.includes(status)) return res.status(400).json({ success: false, message: 'Invalid status' });
 
         const report = await CrimeReport.findById(id);
