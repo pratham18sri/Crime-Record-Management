@@ -4,12 +4,24 @@ import User from '../models/user.model.js';
 export const authenticate = async (req, res, next) => {
   try {
     const token = req.cookies?.token;
+    // Debug logs: show origin and cookies so we can diagnose cross-site cookie issues in deployed envs
+    console.log('Auth attempt - origin:', req.headers.origin, 'cookies:', req.cookies, 'tokenPresent:', !!token);
     if (!token) {
+      console.warn('Authentication failed: no token present in cookies');
       return res.status(401).json({ message: 'Not authenticated' });
     }
 
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
-    if (!payload?.id) return res.status(401).json({ message: 'Invalid token' });
+    let payload;
+    try {
+      payload = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (verifyErr) {
+      console.error('JWT verify error:', verifyErr && verifyErr.message);
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+    if (!payload?.id) {
+      console.warn('Authentication failed: token payload missing id', payload);
+      return res.status(401).json({ message: 'Invalid token' });
+    }
 
     // If token was created for fake police id we may not have a DB user
     if (payload.id === 'police-officer') {
