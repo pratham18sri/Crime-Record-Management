@@ -38,7 +38,7 @@ const crimeReportSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'accepted', 'rejected', 'investigating', 'resolved', 'closed'],
+        enum: ['pending', 'active', 'accepted', 'rejected', 'investigating', 'resolved', 'closed'],
         default: 'pending'
     },
     evidence: [{

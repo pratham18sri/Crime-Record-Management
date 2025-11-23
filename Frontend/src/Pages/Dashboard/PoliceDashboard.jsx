@@ -236,10 +236,11 @@ const ReportsTab = ({ reports, loading, error, refresh }) => {
             <div className="mt-3 flex items-center space-x-3">
               <button onClick={() => setSelected(r)} className="px-3 py-2 bg-gray-600 rounded">View</button>
               <button onClick={() => assignToMe(r._id)} className="px-3 py-2 bg-green-600 rounded">Assign to me</button>
-              <button onClick={() => changeStatus(r._id, 'accepted')} className="px-3 py-2 bg-blue-600 rounded">Accept</button>
+              <button onClick={() => changeStatus(r._id, 'active')} className="px-3 py-2 bg-blue-600 rounded">Accept (Active)</button>
               <button onClick={() => changeStatus(r._id, 'rejected')} className="px-3 py-2 bg-red-600 rounded">Reject</button>
               <select defaultValue={r.status} onChange={(e) => changeStatus(r._id, e.target.value)} className="px-2 py-1 bg-gray-600 rounded">
                 <option value="pending">pending</option>
+                <option value="active">active</option>
                 <option value="accepted">accepted</option>
                 <option value="rejected">rejected</option>
                 <option value="investigating">investigating</option>
