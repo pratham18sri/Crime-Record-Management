@@ -9,7 +9,8 @@ const router = express.Router();
 const upload = multer({ dest: './uploads/' });
 
 // Submit a new crime report (supports multipart/form-data with files)
-router.post('/report', authenticate, upload.array('evidence'), createCrimeReport);
+// Allow anonymous users to submit reports; the controller will mark reportedBy=null for anonymous
+router.post('/report', upload.array('evidence'), createCrimeReport);
 
 // Get all crime reports for the logged-in user
 router.get('/reports', authenticate, getCrimeReports);

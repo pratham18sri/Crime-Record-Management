@@ -21,11 +21,22 @@ const PoliceDashboard = () => {
     try {
       setLoadingReports(true);
       setReportsError(null);
+      // Ensure the current user is a police officer before requesting police-only endpoint
+      if (!currentUser || currentUser.role !== 'police') {
+        setReportsError('You must be logged in as a police officer to view all reports.');
+        return;
+      }
+
       const { data } = await axios.get(`${serverUrl}/api/crime/all`, { withCredentials: true });
       if (data.success) setReports(data.reports || []);
       else setReportsError(data.message || 'Failed to load reports');
     } catch (err) {
       console.error('Fetch reports error', err);
+      // If unauthorized, guide the user to log in as police
+      if (err?.response?.status === 401) {
+        setReportsError('Unauthorized. Please login as a police officer to view all reports.');
+        return;
+      }
       setReportsError(err.message || 'Failed to load reports');
     } finally {
       setLoadingReports(false);

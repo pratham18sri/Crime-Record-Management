@@ -69,7 +69,7 @@ const ReportCrime = () => {
       const formDataToSend = new FormData();
       
       // Add files if any
-      selectedFiles.forEach((file, index) => {
+      selectedFiles.forEach((file) => {
         formDataToSend.append('evidence', file);
       });
 
