@@ -41,16 +41,19 @@ export const signUp=async (req, res) => {
 
         });
         //generate token
-        let token=await generateToken(user._id);
-        //token ko cookie ma store krna
-        //cookie ma store krne se user ko login krne ki zarurat nahi hoti
+        let token = await generateToken(user._id);
+        // compute cookie options to allow cross-site cookies when deployed
         const isProd = process.env.NODE_ENV === 'production';
-        res.cookie("token",token,{
-            httpOnly:true,
-            secure:isProd,
-            sameSite:isProd ? "None" : "Lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days din k baad y cookies expire ho jayegi
-        })
+        const forceCrossSite = !!process.env.CLIENT_URL || process.env.FORCE_COOKIE_NONE === 'true';
+        const cookieSameSite = (isProd || forceCrossSite) ? 'None' : 'Lax';
+        const cookieSecure = (isProd || forceCrossSite) ? true : false;
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: cookieSecure,
+            sameSite: cookieSameSite,
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+        console.log('Set-Cookie on signup:', { sameSite: cookieSameSite, secure: cookieSecure });
 
         //return response
         return res.status(201).json({message:"User created successfully", user:{firstname, lastname, email, username, role: user.role
@@ -81,13 +84,17 @@ export const login = async (req, res) => {
             }
             // generate a token for a pseudo-police user
             const token = await generateToken('police-officer');
-            const isProd = process.env.NODE_ENV === 'production';
+            const isProdLocal = process.env.NODE_ENV === 'production';
+            const forceCrossSiteLocal = !!process.env.CLIENT_URL || process.env.FORCE_COOKIE_NONE === 'true';
+            const cookieSameSiteLocal = (isProdLocal || forceCrossSiteLocal) ? 'None' : 'Lax';
+            const cookieSecureLocal = (isProdLocal || forceCrossSiteLocal) ? true : false;
             res.cookie("token", token, {
                 httpOnly: true,
-                secure: isProd,
-                sameSite: isProd ? "None" : "Lax",
+                secure: cookieSecureLocal,
+                sameSite: cookieSameSiteLocal,
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
+            console.log('Set-Cookie on police login:', { sameSite: cookieSameSiteLocal, secure: cookieSecureLocal });
             return res.status(200).json({ message: 'Login successful', role: 'police', user: { username: POLICE_ID, role: 'police' } });
         }
 
@@ -108,14 +115,18 @@ export const login = async (req, res) => {
         }
         // Generate token
         const token = await generateToken(existingUser._id);
-        // Set cookie
-        const isProd = process.env.NODE_ENV === 'production';
+        // Set cookie with cross-site options when appropriate
+        const isProd2 = process.env.NODE_ENV === 'production';
+        const forceCrossSite2 = !!process.env.CLIENT_URL || process.env.FORCE_COOKIE_NONE === 'true';
+        const cookieSameSite2 = (isProd2 || forceCrossSite2) ? 'None' : 'Lax';
+        const cookieSecure2 = (isProd2 || forceCrossSite2) ? true : false;
         res.cookie("token", token, {
             httpOnly: true,
-             secure:isProd,
-            sameSite:isProd ? "None" : "Lax",
+            secure: cookieSecure2,
+            sameSite: cookieSameSite2,
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
+        console.log('Set-Cookie on user login:', { sameSite: cookieSameSite2, secure: cookieSecure2 });
         res.status(200).json({
             message: "Login successful",
             user: {
@@ -136,19 +147,20 @@ export const login = async (req, res) => {
 //3 LOGOUT
 export const logout=async(req,res)=>{
     try{
-        const isProd = process.env.NODE_ENV === 'production';
+        const isProd3 = process.env.NODE_ENV === 'production';
+        const forceCrossSite3 = !!process.env.CLIENT_URL || process.env.FORCE_COOKIE_NONE === 'true';
+        const cookieSameSite3 = (isProd3 || forceCrossSite3) ? 'None' : 'Strict';
+        const cookieSecure3 = (isProd3 || forceCrossSite3) ? true : false;
         const cookieOptions = {
             httpOnly: true,
-            secure: isProd,
-            sameSite: isProd ? "None" : "Strict",
+            secure: cookieSecure3,
+            sameSite: cookieSameSite3,
             path: "/",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         };
-        if(isProd){
-            cookieOptions.sameSite = "None";
-        }
         res.cookie("token", "", cookieOptions);
         res.clearCookie("token", cookieOptions);
+        console.log('Cleared token cookie on logout:', { sameSite: cookieSameSite3, secure: cookieSecure3 });
         return res.status(200).json({message:"User logged out successfully"});
     }catch(error){
         res.status(500).json({message: error.message});
