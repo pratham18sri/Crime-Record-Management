@@ -250,15 +250,24 @@ const ReportsTab = ({ reports, loading, error, refresh }) => {
         {reports.map(r => (
           <div key={r._id} className="bg-gray-700/40 p-4 rounded-lg border border-gray-600">
             <div className="flex justify-between items-start">
-              <div>
-                <h4 className="font-semibold text-white">{r.title}</h4>
-                <p className="text-sm text-gray-300">Case ID: {r._id}</p>
-                <p className="text-sm text-gray-300">Reported by: {r.reportedBy?.username || 'Anonymous'}</p>
-                <p className="text-sm text-gray-300">Location: {r.location?.address}, {r.location?.city}</p>
+              <div className="flex-1">
+                <h4 className="font-semibold text-white text-lg">{r.title}</h4>
+                <p className="text-xs text-gray-400 mt-1">Case ID: {r._id}</p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-sm text-gray-300">📋 <span className="font-medium">Reported by:</span> {r.reportedBy ? `${r.reportedBy.firstname} ${r.reportedBy.lastname}` : 'Anonymous'}</p>
+                  {r.reportedBy?.email && <p className="text-xs text-gray-400">📧 {r.reportedBy.email}</p>}
+                  <p className="text-sm text-gray-300">📍 <span className="font-medium">Location:</span> {r.location?.address}, {r.location?.city}</p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-300">Status: <span className="font-semibold">{r.status}</span></p>
-                <p className="text-sm text-gray-400">{new Date(r.createdAt).toLocaleString()}</p>
+              <div className="text-right ml-4">
+                <p className="text-sm text-gray-300">Status: <span className={`font-semibold px-2 py-1 rounded text-xs ${
+                  r.status === 'active' ? 'bg-green-500/20 text-green-300' :
+                  r.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300' :
+                  r.status === 'rejected' ? 'bg-red-500/20 text-red-300' :
+                  r.status === 'investigating' ? 'bg-blue-500/20 text-blue-300' :
+                  'bg-gray-500/20 text-gray-300'
+                }`}>{r.status.toUpperCase()}</span></p>
+                <p className="text-xs text-gray-400 mt-2">{new Date(r.createdAt).toLocaleString()}</p>
               </div>
             </div>
 
@@ -279,20 +288,51 @@ const ReportsTab = ({ reports, loading, error, refresh }) => {
             </div>
 
             {selected?._id === r._id && (
-              <div className="mt-4 bg-gray-800 p-3 rounded">
-                <p className="text-sm text-gray-300">{r.description}</p>
-                {r.evidence?.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-300">Evidence:</p>
-                    <ul className="text-sm text-gray-400">
-                      {r.evidence.map((e, idx) => (
-                        <li key={idx}><a className="underline text-blue-300" href={e.url} target="_blank" rel="noreferrer">{e.description || e.url}</a></li>
-                      ))}
-                    </ul>
+              <div className="mt-4 bg-gray-800 p-4 rounded-lg border border-gray-600">
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Description</p>
+                    <p className="text-sm text-gray-300 mt-1">{r.description}</p>
                   </div>
-                )}
-                <div className="mt-2 text-right">
-                  <button onClick={() => setSelected(null)} className="px-3 py-1 bg-gray-600 rounded">Close</button>
+                  {r.incidentDate && (
+                    <div>
+                      <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Incident Date</p>
+                      <p className="text-sm text-gray-300 mt-1">{new Date(r.incidentDate).toLocaleString()}</p>
+                    </div>
+                  )}
+                  {r.witnesses?.length > 0 && (
+                    <div>
+                      <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Witnesses</p>
+                      <ul className="text-sm text-gray-300 mt-1 space-y-1 ml-2">
+                        {r.witnesses.map((w, idx) => (
+                          <li key={idx}>👤 {w.name} {w.contact ? `(${w.contact})` : ''}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {r.evidence?.length > 0 && (
+                    <div>
+                      <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Evidence</p>
+                      <ul className="text-sm text-gray-400 mt-1 space-y-1">
+                        {r.evidence.map((e, idx) => (
+                          <li key={idx}>📎 <a className="underline text-blue-300 hover:text-blue-200" href={e.url} target="_blank" rel="noreferrer">{e.description || e.url}</a></li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {r.reportedBy && (
+                    <div className="pt-2 border-t border-gray-700">
+                      <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Reporter Details</p>
+                      <div className="text-sm text-gray-300 mt-1 space-y-1">
+                        <p>👤 <span className="font-medium">{r.reportedBy.firstname} {r.reportedBy.lastname}</span></p>
+                        {r.reportedBy.email && <p>📧 {r.reportedBy.email}</p>}
+                        {r.reportedBy.username && <p>🔑 @{r.reportedBy.username}</p>}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="mt-4 text-right">
+                  <button onClick={() => setSelected(null)} className="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-sm font-medium">Close</button>
                 </div>
               </div>
             )}
